@@ -10,6 +10,10 @@ const getUserFromLocalStorage = () => {
   return JSON.parse(localStorage.getItem('user')) || null;
 };
 
+const getAdminFromLocalStorage = () => {
+  return JSON.parse(localStorage.getItem('admin')) || null;
+};
+
 const getThemeFromLocalStorage = () => {
   const theme = localStorage.getItem('theme') || themes.winter;
   document.documentElement.setAttribute('data-theme', theme);
@@ -18,6 +22,7 @@ const getThemeFromLocalStorage = () => {
 
 const initialState = {
   user: getUserFromLocalStorage(),
+  admin: getAdminFromLocalStorage(),
   theme: getThemeFromLocalStorage(),
 };
 
@@ -30,9 +35,19 @@ const userSlice = createSlice({
       state.user = user;
       localStorage.setItem('user', JSON.stringify(user));
     },
+    loginAdmin: (state, action) => {
+      const admin = { ...action.payload.admin, token: action.payload.jwt };
+      state.admin = admin;
+      localStorage.setItem('admin', JSON.stringify(admin));
+    },
     logoutUser: (state) => {
       state.user = null;
       localStorage.removeItem('user');
+      toast.success('Logged out successfully');
+    },
+    logoutAdmin: (state) => {
+      state.user = null;
+      localStorage.removeItem('admin');
       toast.success('Logged out successfully');
     },
     toggleTheme: (state) => {
@@ -44,6 +59,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginUser, logoutUser, toggleTheme } = userSlice.actions;
+export const { loginUser, logoutUser, toggleTheme,loginAdmin,logoutAdmin } = userSlice.actions;
 
 export default userSlice.reducer;
