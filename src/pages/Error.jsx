@@ -1,8 +1,13 @@
-import { useRouteError, Link } from 'react-router-dom';
+import { useRouteError, Link, useLocation } from 'react-router-dom';
 
 const Error = () => {
   const error = useRouteError();
+  const location = useLocation()
   console.log(error);
+
+    const redirectPath = location.pathname.startsWith('/admin')
+    ? '/admin/login'
+    : '/login';
 
   if (error.status === 404) {
     return (
@@ -16,7 +21,7 @@ const Error = () => {
             Sorry, we couldn’t find the page you’re looking for.
           </p>
           <div className='mt-10'>
-            <Link to='/' className='btn btn-secondary'>
+            <Link to={redirectPath} className='btn btn-secondary'>
               go back home
             </Link>
           </div>

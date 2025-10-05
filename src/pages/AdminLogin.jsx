@@ -9,7 +9,7 @@ export const action = (store) => async ({ request }) => {
   const data = Object.fromEntries(formData);
 
   try {
-    const response = await customFetch.post('/auth/admin/login', data);
+    const response = await customFetch.post('/authadmin/login', data);
     store.dispatch(loginAdmin(response.data));
     toast.success('logged in successfully');
     return redirect('/admin');

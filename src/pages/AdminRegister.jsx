@@ -8,7 +8,7 @@ export const action = async ({ request }) => {
   const data = Object.fromEntries(formData);
 
   try {
-    await customFetch.post('/auth/admin/register', data);
+    await customFetch.post('/authadmin/register', data);
     toast.success('registered successfully');
     return redirect('/admin/login');
   } catch (error) {
@@ -26,6 +26,7 @@ const AdminRegister = () => {
       <Form
         method='post'
         className='card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4'
+        encType="multipart/form-data"
       >
         <h4 className='text-center text-3xl font-bold'>Admin Register</h4>
         <FormInput type='text' label='username' name='username' />

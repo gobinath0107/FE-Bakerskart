@@ -34,13 +34,13 @@ const CartItem = ({ cartItem }) => {
           {company}
         </h4>
         {/* COLOR */}
-        <p className='mt-4 text-sm capitalize flex items-center gap-x-2'>
+        {/* <p className='mt-4 text-sm capitalize flex items-center gap-x-2'>
           color :
           <span
             className='badge badge-sm'
             style={{ backgroundColor: productColor }}
           ></span>
-        </p>
+        </p> */}
       </div>
       <div className='sm:ml-12'>
         {/* AMOUNT */}
