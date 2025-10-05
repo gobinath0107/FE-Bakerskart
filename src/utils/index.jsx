@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // const productionUrl = ' https://strapi-store-server.onrender.com/api';
-const productionUrl = 'http://localhost:5000/api/v1';
+const productionUrl = import.meta.env.MODE === "developemnt" ?  'http://localhost:5000/api/v1' : 'https://be-bakerskart-production.up.railway.app/api/v1';
+console.log("import.meta.env.MODE",import.meta.env.MODE);
+
 
 export const customFetch = axios.create({
   baseURL: productionUrl,
