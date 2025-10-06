@@ -29,8 +29,8 @@ export const action =
         console.log(key, value);
       }
 
-      const rawValue = formData.get("featured"); // will be "true" if checked, null if unchecked
-      const isFeatured = rawValue === "true"; // boolean conversion
+      // Convert checkbox to true/false string
+      const isFeatured = formData.get("featured") ? "true" : "false";
       formData.set("featured", isFeatured);
 
       // Send FormData directly — do NOT convert to JSON
@@ -40,7 +40,8 @@ export const action =
         },
       });
 
-      await queryClient.invalidateQueries(["products"]);
+      await queryClient.removeQueries(["products"]);
+      await queryClient.removeQueries(["product"]);
       await queryClient.invalidateQueries(["products", params.id]);
       toast.success("Product updated");
       return redirect("/admin/products");
@@ -120,7 +121,6 @@ const AdminProductsEdit = () => {
           name="featured"
           type="checkbox"
           defaultChecked={product.featured}
-          value="true"
         />
 
         {/* Image upload section */}
@@ -132,28 +132,56 @@ const AdminProductsEdit = () => {
                 <div
                   key={imgKey}
                   className="relative w-16 h-16 cursor-pointer border rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center"
-                  onClick={() => handleImageClick(imgKey)}
                 >
-                  {previewImages[imgKey] ? (
-                    // Show new preview
-                    <img
-                      src={previewImages[imgKey]}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : product[imgKey]?.url ? (
-                    // Show existing image
-                    <img
-                      src={product[imgKey].url}
-                      alt={product.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    // Placeholder box
-                    <span className="text-xs text-gray-500">{imgKey}</span>
+                  {/* Delete / Close Button */}
+                  {(previewImages[imgKey] || product[imgKey]?.url) && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent triggering file input
+                        // Remove preview
+                        setPreviewImages((prev) => ({
+                          ...prev,
+                          [imgKey]: null,
+                        }));
+                        // Mark existing image to delete
+                        const deleteInput = document.createElement("input");
+                        deleteInput.type = "hidden";
+                        deleteInput.name = `delete_${imgKey}`;
+                        deleteInput.value = "true";
+                        e.currentTarget.parentNode.appendChild(deleteInput);
+                        // Optional: hide the existing image visually
+                        if (product[imgKey]?.url) product[imgKey].url = null;
+                      }}
+                      className="absolute top-1 right-1 bg-gray-800 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full z-10"
+                    >
+                      ×
+                    </button>
                   )}
 
-                  {/* Hidden input */}
+                  {/* Clickable image / preview */}
+                  <div
+                    onClick={() => handleImageClick(imgKey)}
+                    className="w-full h-full"
+                  >
+                    {previewImages[imgKey] ? (
+                      <img
+                        src={previewImages[imgKey]}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : product[imgKey]?.url ? (
+                      <img
+                        src={product[imgKey].url}
+                        alt={product.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs text-gray-500">{imgKey}</span>
+                    )}
+                  </div>
+
+                  {/* Hidden file input */}
                   <input
                     type="file"
                     name={imgKey}
