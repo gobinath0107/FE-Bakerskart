@@ -16,33 +16,42 @@ export const loader =
     if (!product) throw new Response("Not Found", { status: 404 });
 
     const { data: categories } = await customFetch.get("/categories");
-    return { product,categories };
+    return { product, categories };
   };
 
-export const action = (queryClient) => async ({ request, params }) => {
-  try {
-    const formData = await request.formData(); // FormData object
+export const action =
+  (queryClient) =>
+  async ({ request, params }) => {
+    try {
+      const formData = await request.formData(); // FormData object
 
-    // Send FormData directly — do NOT convert to JSON
-    await customFetch.patch(`/products/${params.id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", // Axios detects boundaries automatically
-      },
-    });
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
 
-    await queryClient.invalidateQueries(["products"]);
-    await queryClient.invalidateQueries(["products", params.id]);
-    toast.success("Product updated");
-    return redirect("/admin/products");
-  } catch (err) {
-    toast.error(err?.response?.data?.message || "Failed to update product");
-    return null;
-  }
-};
+      const rawValue = formData.get("featured"); // will be "true" if checked, null if unchecked
+      const isFeatured = rawValue === "true"; // boolean conversion
+      formData.set("featured", isFeatured);
 
+      // Send FormData directly — do NOT convert to JSON
+      await customFetch.patch(`/products/${params.id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Axios detects boundaries automatically
+        },
+      });
+
+      await queryClient.invalidateQueries(["products"]);
+      await queryClient.invalidateQueries(["products", params.id]);
+      toast.success("Product updated");
+      return redirect("/admin/products");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update product");
+      return null;
+    }
+  };
 
 const AdminProductsEdit = () => {
-  const { product,categories } = useLoaderData();
+  const { product, categories } = useLoaderData();
   const fileInputsRef = useRef({});
   const [previewImages, setPreviewImages] = useState({});
 
@@ -111,6 +120,7 @@ const AdminProductsEdit = () => {
           name="featured"
           type="checkbox"
           defaultChecked={product.featured}
+          value="true"
         />
 
         {/* Image upload section */}
