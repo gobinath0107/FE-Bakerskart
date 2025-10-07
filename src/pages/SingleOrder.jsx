@@ -1,6 +1,6 @@
 import { useLoaderData, Link, redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-import { customFetch, formatPrice } from "../utils";
+import { customFetch, formatPrice,productionUrl } from "../utils";
 
 // Query for fetching a single order
 const singleOrderQuery = (id, user) => {
@@ -43,7 +43,7 @@ const SingleOrder = () => {
   const handleDownloadInvoice = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/orders/${order._id}/invoice`,
+        `${productionUrl}/orders/${order._id}/invoice`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
@@ -138,7 +138,7 @@ const SingleOrder = () => {
         <div></div>
         <div className="text-right">
           <p>Subtotal: ₹{order.chargeTotal?.toLocaleString()}</p>
-          <p>Discount: ₹{order.discount || 0}</p>
+          { Number(order.discount) ? <p>Discount: ₹{order.discount || 0}</p> : ""}
           <p className="font-bold">Total: ₹{order.orderTotal}</p>
         </div>
       </div>
