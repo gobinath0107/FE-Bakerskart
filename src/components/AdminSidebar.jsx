@@ -6,6 +6,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
     { name: "Admins", path: "/admin/admins" },
     { name: "Orders", path: "/admin/orders" },
     { name: "Products", path: "/admin/products" },
+    { name: "Category", path: "/admin/category" }
   ];
 
   return (

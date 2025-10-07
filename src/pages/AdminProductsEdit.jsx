@@ -15,8 +15,8 @@ export const loader =
     );
     if (!product) throw new Response("Not Found", { status: 404 });
 
-    const { data: categories } = await customFetch.get("/categories");
-    return { product, categories };
+    const response = await customFetch.get("/categories");
+    return { product, categories:response.data.data };
   };
 
 export const action =

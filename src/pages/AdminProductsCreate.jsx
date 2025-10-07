@@ -9,9 +9,9 @@ import SubmitBtn from '../components/SubmitBtn';
 // 🔹 loader to fetch categories
 export const loader = async () => {
   try {
-    const response = await customFetch.get('/categories');
-    // assuming API returns { data: [ { _id, name } ] }
-    return response.data || [];
+    const response = await customFetch.get('/categories',{ params: { page:1, pageSize:1000 }});
+    const categories = response.data.data || [];
+    return categories
   } catch (err) {
     console.error("Failed to fetch categories", err);
     return [];

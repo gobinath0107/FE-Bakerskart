@@ -1,6 +1,7 @@
-import { useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
 import day from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
+import { FaEye } from "react-icons/fa"
 day.extend(advancedFormat);
 
 const OrdersList = () => {
@@ -16,6 +17,7 @@ const OrdersList = () => {
           {/* head */}
           <thead>
             <tr>
+              <th>OrderId</th>
               <th>Name</th>
               <th>Address</th>
               <th>Products</th>
@@ -26,16 +28,18 @@ const OrdersList = () => {
           <tbody>
             {orders.map((order) => {
               const id = order.id;
-              const { name, address, numItemsInCart, orderTotal, createdAt } =
+              const { orderId, name, address, numItemsInCart, orderTotal, createdAt } =
                 order.attributes;
               const date = day(createdAt).format('hh:mm a - MMM Do, YYYY');
               return (
                 <tr key={id}>
+                  <td>{orderId}</td>
                   <td>{name}</td>
                   <td>{address}</td>
                   <td>{numItemsInCart}</td>
                   <td>{orderTotal}</td>
                   <td className='hidden sm:block'>{date}</td>
+                  <td><Link to={`/orders/${id}`}><FaEye className='h-4 w-4'/></Link></td>
                 </tr>
               );
             })}

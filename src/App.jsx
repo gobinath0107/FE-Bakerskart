@@ -17,6 +17,7 @@ import {
   Products,
   Register,
   SingleProduct,
+  SingleOrder,
   Admins,
   AdminLogin,
   AdminRegister,
@@ -29,6 +30,10 @@ import {
   AdminProducts,
   AdminProductsCreate,
   AdminProductsEdit,
+  AdminOrder,
+  AdminOrderEdit,
+  AdminCategory,
+  AdminCategoryEdit
 } from "./pages";
 
 import { ErrorElement } from "./components";
@@ -40,6 +45,7 @@ import { loader as singleProductLoader } from "./pages/SingleProduct";
 import { loader as productsLoader } from "./pages/Products";
 import { loader as checkoutLoader } from "./pages/Checkout";
 import { loader as ordersLoader } from "./pages/Orders";
+import { loader as singleOrderLoader } from './pages/SingleOrder'
 import { loader as adminsLoader } from "./pages/Admins";
 import { loader as adminEditLoader } from "./pages/AdminEdit";
 import { loader as adminUserLoader } from "./pages/AdminUser";
@@ -47,6 +53,10 @@ import { loader as adminUserEditLoader } from "./pages/AdminUserEdit";
 import { loader as adminProductsLoader } from "./pages/AdminProducts";
 import { loader as adminCategoriesLoader } from "./pages/AdminProductsCreate";
 import { loader as adminProductsEditLoader } from "./pages/AdminProductsEdit";
+import { loader as adminOrderLoader } from './pages/AdminOrders'
+import { loader as adminOrderEditLoader } from './pages/AdminOrdersEdit'
+import { loader as adminCategoryLoader } from './pages/AdminCategory'
+import { loader as adminCategoryEditLoader } from './pages/AdminCategoryEdit'
 // actions
 import { action as registerAction } from "./pages/Register";
 import { action as loginAction } from "./pages/Login";
@@ -59,6 +69,8 @@ import { action as adminUserEditAction } from "./pages/AdminUserEdit";
 import { action as adminUserCreateAction } from "./pages/AdminUserCreate";
 import { action as adminProductsCreateAction } from "./pages/AdminProductsCreate";
 import { action as adminProductsEditAction } from "./pages/AdminProductsEdit";
+import { action as adminOrderEditAction } from './pages/AdminOrdersEdit'
+import { action as adminCategoryEditAction } from './pages/AdminCategoryEdit'
 import { store } from "./store";
 
 const adminLoader = (store) => () => {
@@ -122,6 +134,12 @@ const router = createBrowserRouter([
         path: "orders",
         element: <Orders />,
         loader: ordersLoader(store, queryClient),
+      },
+      {
+        path: "orders/:id",
+        element: <SingleOrder />,
+        errorElement: <ErrorElement />,
+        loader: singleOrderLoader(store,queryClient)
       },
     ],
   },
@@ -209,6 +227,32 @@ const router = createBrowserRouter([
         errorElement: <ErrorElement />,
         loader: adminProductsEditLoader(queryClient),
         action: adminProductsEditAction(queryClient),
+      },
+      {
+        path: "orders",
+        element: <AdminOrder />,
+        errorElement: <ErrorElement />,
+        loader: adminOrderLoader(store,queryClient)
+      },
+      {
+        path: "orders/edit/:id",
+        element: <AdminOrderEdit />,
+        errorElement: <ErrorElement />,
+        loader: adminOrderEditLoader(queryClient),
+        action: adminOrderEditAction(queryClient)
+      },
+      {
+        path: "category",
+        element: <AdminCategory />,
+        errorElement: <ErrorElement />,
+        loader: adminCategoryLoader(queryClient)
+      },
+      {
+        path: "category/edit/:id",
+        element: <AdminCategoryEdit />,
+        errorElement: <ErrorElement />,
+        loader: adminCategoryEditLoader(queryClient),
+        action: adminCategoryEditAction(queryClient)
       },
     ],
   },

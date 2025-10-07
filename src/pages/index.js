@@ -9,6 +9,7 @@ export { default as Orders } from './Orders';
 export { default as Products } from './Products';
 export { default as Register } from './Register';
 export { default as SingleProduct } from './SingleProduct';
+export { default as SingleOrder } from './SingleOrder'
 export { default as DashboardLayout } from './DashboardLayout';
 export { default as AdminLogin } from './AdminLogin';
 export { default as AdminRegister } from './AdminRegister';
@@ -21,3 +22,7 @@ export { default as AdminUserEdit } from './AdminUserEdit';
 export { default as AdminProducts } from './AdminProducts';
 export { default as AdminProductsCreate } from './AdminProductsCreate';
 export { default as AdminProductsEdit } from './AdminProductsEdit';
+export { default as AdminOrder } from './AdminOrders'
+export { default as AdminOrderEdit } from './AdminOrdersEdit'
+export { default as AdminCategory } from './AdminCategory'
+export { default as AdminCategoryEdit } from './AdminCategoryEdit'
