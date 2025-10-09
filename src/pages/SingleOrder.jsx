@@ -1,8 +1,8 @@
 import { useLoaderData, Link, redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-import { customFetch, formatPrice,productionUrl } from "../utils";
+import { customFetch, formatPrice, productionUrl } from "../utils";
 
-// Query for fetching a single order
+// --- Query for fetching a single order ---
 const singleOrderQuery = (id, user) => {
   return {
     queryKey: ["singleOrder", id],
@@ -34,12 +34,8 @@ export const loader = (store, queryClient) => async ({ params }) => {
 
 const SingleOrder = () => {
   const { order, user } = useLoaderData();
-  console.log("order",order);
-  
-
   if (!order) return <p className="text-center mt-10">Order not found</p>;
 
-  // 🧾 Function to download invoice
   const handleDownloadInvoice = async () => {
     try {
       const response = await fetch(
@@ -48,12 +44,8 @@ const SingleOrder = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
+      if (!response.ok) throw new Error("Failed to generate invoice");
 
-      if (!response.ok) {
-        throw new Error("Failed to generate invoice");
-      }
-
-      // Convert response to Blob (PDF)
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -71,59 +63,47 @@ const SingleOrder = () => {
   };
 
   return (
-    <section className="max-w-4xl mx-auto p-6 bg-base-200 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-6">
+    <section className="max-w-5xl mx-auto p-4 sm:p-6 bg-base-200 rounded-lg shadow">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
         <h2 className="text-2xl font-bold">Order Details</h2>
         <Link to="/orders" className="btn btn-outline btn-sm">
           Back to Orders
         </Link>
       </div>
 
-      <div className="grid gap-3 mb-6">
-        <p>
-          <strong>Order ID:</strong> {order.orderId}
-        </p>
-        <p>
-          <strong>Status:</strong>{" "}
-          <span className="capitalize">{order.status}</span>
-        </p>
-        <p>
-          <strong>Date:</strong>{" "}
-          {new Date(order.createdAt).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>Customer:</strong> {order.name}
-        </p>
-        <p>
-          <strong>Company:</strong> {order.user.company}
-        </p>
-        <p>
-          <strong>Address:</strong> {order.address}, {order.city},{" "}
-          {order.state}
-        </p>
+      {/* Order Info */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 text-sm sm:text-base">
+        <p><strong>Order ID:</strong> {order.orderId}</p>
+        <p><strong>Status:</strong> <span className="capitalize">{order.status}</span></p>
+        <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
+        <p><strong>Customer:</strong> {order.name}</p>
+        <p><strong>Company:</strong> {order.user?.company}</p>
+        <p><strong>Address:</strong> {order.address}, {order.city}, {order.state}</p>
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">Cart Items</h3>
+      {/* Cart Items */}
+      <h3 className="text-lg font-semibold mb-3">Cart Items</h3>
       <div className="overflow-x-auto border rounded-lg">
-        <table className="table w-full">
-          <thead>
+        <table className="table w-full text-sm sm:text-base">
+          <thead className="bg-base-300">
             <tr>
               <th>Product</th>
               <th>Price (₹)</th>
-              <th>Quantity</th>
+              <th>Qty</th>
               <th>Total</th>
             </tr>
           </thead>
           <tbody>
             {order.cartItems.map((item) => (
               <tr key={item._id}>
-                <td className="flex items-center gap-3">
+                <td className="flex items-center gap-3 min-w-[180px]">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-16 h-16 object-cover rounded"
+                    className="w-14 h-14 object-cover rounded"
                   />
-                  {item.name}
+                  <span className="truncate">{item.name}</span>
                 </td>
                 <td>{formatPrice(item.price)}</td>
                 <td>{item.amount}</td>
@@ -134,24 +114,26 @@ const SingleOrder = () => {
         </table>
       </div>
 
-      <div className="flex justify-between mt-6 text-lg">
+      {/* Totals */}
+      <div className="flex flex-col sm:flex-row justify-between mt-6 text-base sm:text-lg">
         <div></div>
         <div className="text-right">
           <p>Subtotal: ₹{order.chargeTotal?.toLocaleString()}</p>
-          { Number(order.discount) ? <p>Discount: ₹{order.discount || 0}</p> : ""}
+          {Number(order.discount) ? (
+            <p>Discount: ₹{order.discount}</p>
+          ) : null}
           <p className="font-bold">Total: ₹{order.orderTotal}</p>
         </div>
       </div>
 
-      {/* 🧾 Download Invoice Button */}
-      { order.status === 'delivered' && <div className="mt-6 text-right">
-        <button
-          className="btn btn-primary btn-md"
-          onClick={handleDownloadInvoice}
-        >
-          Download Invoice
-        </button>
-      </div>}
+      {/* Invoice Button */}
+      {order.status === "delivered" && (
+        <div className="mt-6 text-right">
+          <button className="btn btn-primary btn-md" onClick={handleDownloadInvoice}>
+            Download Invoice
+          </button>
+        </div>
+      )}
     </section>
   );
 };

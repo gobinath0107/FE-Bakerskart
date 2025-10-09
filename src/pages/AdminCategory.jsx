@@ -37,16 +37,24 @@ const AdminCategory = () => {
   const { categories, meta } = useLoaderData();
   const [loading, setLoading] = useState(false);
 
-  // 🔹 State for modal
+  // 🔹 Modal states
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  // 🔹 Open delete confirmation modal
+  const handleDeleteClick = (category) => {
+    setSelectedCategory(category);
+    setShowModal(true);
+  };
+
+  // 🔹 Confirm deletion
   const handleDeleteConfirm = async () => {
-    if (!setSelectedCategory) return;
+    if (!selectedCategory?._id) return;
+
     try {
       setLoading(true);
-      await customFetch.delete(`${url}/${setSelectedCategory._id}`);
-      window.location.reload(); // or use queryClient.invalidateQueries(['admins'])
+      await customFetch.delete(`${url}/${selectedCategory._id}`);
+      window.location.reload(); // optional: replace with queryClient.invalidateQueries(['categories'])
     } catch (err) {
       console.error(err);
     } finally {
@@ -60,7 +68,7 @@ const AdminCategory = () => {
     <div className="p-6 bg-base-200 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Categories</h2>
-        <Link to="/admin/categories/create" className="btn btn-primary btn-sm">
+        <Link to="/admin/category/create" className="btn btn-primary btn-sm">
           + Add Category
         </Link>
       </div>
@@ -87,7 +95,7 @@ const AdminCategory = () => {
                     Edit
                   </Link>
                   <button
-                    onClick={() => handleDeleteConfirm(cat._id)}
+                    onClick={() => handleDeleteClick(cat)}
                     className="btn btn-sm btn-error"
                   >
                     Delete
@@ -99,18 +107,16 @@ const AdminCategory = () => {
         </table>
       </div>
 
-     { meta?.pagination && <PaginationContainer meta={meta} />}
+      {meta?.pagination && <PaginationContainer meta={meta} />}
 
-           {showModal && (
+      {/* 🔹 Confirmation Modal */}
+      {showModal && (
         <dialog open className="modal">
           <div className="modal-box">
             <h3 className="font-bold text-lg">Confirm Deletion</h3>
             <p className="py-4">
-              Are you sure you want to delete the category by{" "}
-              <span className="font-semibold">
-                {selectedCategory?.attributes.name}
-              </span>
-              ?
+              Are you sure you want to delete category{' '}
+              <span className="font-semibold">{selectedCategory?.name}</span>?
             </p>
             <div className="modal-action">
               <button
@@ -118,7 +124,7 @@ const AdminCategory = () => {
                 onClick={handleDeleteConfirm}
                 disabled={loading}
               >
-                {loading ? "Deleting..." : "Yes, Delete"}
+                {loading ? 'Deleting...' : 'Yes, Delete'}
               </button>
               <button
                 className="btn"

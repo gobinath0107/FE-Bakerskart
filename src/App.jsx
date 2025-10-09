@@ -33,7 +33,8 @@ import {
   AdminOrder,
   AdminOrderEdit,
   AdminCategory,
-  AdminCategoryEdit
+  AdminCategoryEdit,
+  AdminCategoryCreate
 } from "./pages";
 
 import { ErrorElement } from "./components";
@@ -71,6 +72,7 @@ import { action as adminProductsCreateAction } from "./pages/AdminProductsCreate
 import { action as adminProductsEditAction } from "./pages/AdminProductsEdit";
 import { action as adminOrderEditAction } from './pages/AdminOrdersEdit'
 import { action as adminCategoryEditAction } from './pages/AdminCategoryEdit'
+import { action as adminCategoryCreateAction } from './pages/AdminCategoryCreate'
 import { store } from "./store";
 
 const adminLoader = (store) => () => {
@@ -253,6 +255,12 @@ const router = createBrowserRouter([
         errorElement: <ErrorElement />,
         loader: adminCategoryEditLoader(queryClient),
         action: adminCategoryEditAction(queryClient)
+      },
+      {
+        path: "category/create",
+        element: <AdminCategoryCreate />,
+        errorElement: <ErrorElement />,
+        action: adminCategoryCreateAction(queryClient)
       },
     ],
   },

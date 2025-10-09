@@ -26,3 +26,4 @@ export { default as AdminOrder } from './AdminOrders'
 export { default as AdminOrderEdit } from './AdminOrdersEdit'
 export { default as AdminCategory } from './AdminCategory'
 export { default as AdminCategoryEdit } from './AdminCategoryEdit'
+export { default as AdminCategoryCreate } from './AdminCategoryCreate';
