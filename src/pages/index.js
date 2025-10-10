@@ -23,6 +23,7 @@ export { default as AdminProducts } from './AdminProducts';
 export { default as AdminProductsCreate } from './AdminProductsCreate';
 export { default as AdminProductsEdit } from './AdminProductsEdit';
 export { default as AdminOrder } from './AdminOrders'
+export { default as AdminOrdersCreate } from './AdminOrderCreate'
 export { default as AdminOrderEdit } from './AdminOrdersEdit'
 export { default as AdminCategory } from './AdminCategory'
 export { default as AdminCategoryEdit } from './AdminCategoryEdit'

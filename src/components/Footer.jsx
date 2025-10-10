@@ -16,7 +16,7 @@ const Footer = () => {
           <p className="text-sm">
             📞 +91 97514 55300 <br />
             ☎️ 0452 - 4355300 <br />
-            ✉️ manager@bakerskart.in
+            ✉️ manager.bakerskart@gmail.com
           </p>
         </div>
 

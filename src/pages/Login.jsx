@@ -103,7 +103,7 @@ const Login = () => {
 
           <input
             type='text'
-            placeholder='Email or Mobile'
+            placeholder='Email'
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             className='input input-bordered w-full'

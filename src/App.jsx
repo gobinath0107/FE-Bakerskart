@@ -32,6 +32,7 @@ import {
   AdminProductsEdit,
   AdminOrder,
   AdminOrderEdit,
+  AdminOrdersCreate,
   AdminCategory,
   AdminCategoryEdit,
   AdminCategoryCreate
@@ -242,6 +243,11 @@ const router = createBrowserRouter([
         errorElement: <ErrorElement />,
         loader: adminOrderEditLoader(queryClient),
         action: adminOrderEditAction(queryClient)
+      },
+      {
+        path: "orders/create",
+        element: <AdminOrdersCreate />,
+        errorElement: <ErrorElement />,
       },
       {
         path: "category",

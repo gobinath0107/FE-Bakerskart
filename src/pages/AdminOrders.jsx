@@ -2,7 +2,6 @@ import { Link, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import { customFetch } from "../utils";
 import { PaginationContainer } from "../components";
-import { useSelector } from "react-redux";
 const url = "/orders";
 
 const allOrdersQuery = (queryParams, token) => ({
@@ -68,6 +67,12 @@ const AdminOrder = () => {
 
   return (
     <div className="overflow-x-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Orders Management</h2>
+        <Link to="create" className="btn btn-primary">
+          + Add Order
+        </Link>
+      </div>
       <table className="table w-full">
         <thead>
           <tr>

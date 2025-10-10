@@ -35,7 +35,7 @@ const AdminLogin = () => {
         <div className='mt-4'>
           <SubmitBtn text='login' />
         </div>
-        <p className='text-center'>
+        {/* <p className='text-center'>
           Not a member yet?{' '}
           <Link
             to='/admin/register'
@@ -43,7 +43,7 @@ const AdminLogin = () => {
           >
             Register
           </Link>
-        </p>
+        </p> */}
       </Form>
     </section>
   );
