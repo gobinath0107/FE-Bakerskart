@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { logoutUser } from '../features/user/userSlice';
+import { store } from '../store';
 
 // const productionUrl = ' https://strapi-store-server.onrender.com/api';
 export const productionUrl = import.meta.env.MODE === "development" ?  'http://localhost:5000/api/v1' : 'https://be-bakerskart-production.up.railway.app/api/v1';
@@ -7,6 +9,21 @@ export const productionUrl = import.meta.env.MODE === "development" ?  'http://l
 export const customFetch = axios.create({
   baseURL: productionUrl,
 });
+
+customFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      store.dispatch(logoutUser());
+      // You might want to redirect to the login page here
+      // Example: window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 export const formatPrice = (price) => {
    const numPrice = Number(price) || 0; // ensure it's always a number
