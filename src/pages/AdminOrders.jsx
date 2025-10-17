@@ -2,6 +2,9 @@ import { Link, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import { customFetch } from "../utils";
 import { PaginationContainer } from "../components";
+import { FaCloudDownloadAlt } from "react-icons/fa"; // ✅ import icon
+import { toast } from "react-toastify"; // optional if using toast notifications
+
 const url = "/orders";
 
 const allOrdersQuery = (queryParams, token) => ({
@@ -48,6 +51,34 @@ const AdminOrder = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  // ✅ Handle Invoice Download
+  const handleDownloadInvoice = async (order) => {
+    try {
+      setLoading(true);
+      const response = await customFetch.get(`/orders/${order.id}/invoice`, {
+        responseType: "blob",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = `invoice-${order.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      toast?.success?.("Invoice downloaded successfully");
+    } catch (err) {
+      console.error(err);
+      toast?.error?.("Failed to download invoice");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Handle Delete
   const handleDeleteConfirm = async () => {
     if (!selectedOrder) return;
     try {
@@ -73,6 +104,7 @@ const AdminOrder = () => {
           + Add Order
         </Link>
       </div>
+
       <table className="table w-full">
         <thead>
           <tr>
@@ -103,12 +135,25 @@ const AdminOrder = () => {
                 </span>
               </td>
               <td className="flex gap-2">
+                {/* ✅ Download Button */}
+                <button
+                  onClick={() => handleDownloadInvoice(order)}
+                  disabled={loading}
+                  className="btn btn-sm btn-outline"
+                  title="Download Invoice"
+                >
+                  <FaCloudDownloadAlt className="text-blue-600" />
+                </button>
+
+                {/* ✅ Edit Button */}
                 <Link
                   to={`edit/${order.id}`}
                   className="btn btn-sm btn-outline"
                 >
                   Edit
                 </Link>
+
+                {/* ✅ Delete Button */}
                 <button
                   onClick={() => {
                     setSelectedOrder(order);
@@ -134,6 +179,7 @@ const AdminOrder = () => {
 
       {meta?.pagination && <PaginationContainer />}
 
+      {/* ✅ Delete Confirmation Modal */}
       {showModal && (
         <dialog open className="modal">
           <div className="modal-box">
