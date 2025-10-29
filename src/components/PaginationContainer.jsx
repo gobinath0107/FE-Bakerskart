@@ -13,6 +13,12 @@ const PaginationContainer = () => {
     const searchParams = new URLSearchParams(search);
     searchParams.set('page', pageNumber);
     navigate(`${pathname}?${searchParams.toString()}`);
+
+    // Scroll to top smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   };
 
   if (pageCount < 2) return null;
