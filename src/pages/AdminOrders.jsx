@@ -2,8 +2,8 @@ import { Link, useLoaderData } from "react-router-dom";
 import { useState } from "react";
 import { customFetch } from "../utils";
 import { PaginationContainer } from "../components";
-import { FaCloudDownloadAlt } from "react-icons/fa"; // ✅ import icon
-import { toast } from "react-toastify"; // optional if using toast notifications
+import { FaCloudDownloadAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const url = "/orders";
 
@@ -51,30 +51,39 @@ const AdminOrder = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // ✅ Handle Invoice Download
-  const handleDownloadInvoice = async (order) => {
+  // new states for bill type modal
+  const [showTypeModal, setShowTypeModal] = useState(false);
+
+  // ✅ Download Invoice with selected type
+  const handleDownloadInvoice = async (order, type) => {
     try {
       setLoading(true);
-      const response = await customFetch.get(`/orders/${order.id}/invoice`, {
-        responseType: "blob",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await customFetch.get(
+        `/orders/${order.id}/invoice?type=${type}`,
+        {
+          responseType: "blob",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const blob = new Blob([response.data], { type: "application/pdf" });
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = downloadUrl;
-      a.download = `invoice-${order.id}.pdf`;
+      a.download = `invoice-${order.id}-${type}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(downloadUrl);
-      toast?.success?.("Invoice downloaded successfully");
+
+      toast?.success?.(`${type} invoice downloaded successfully`);
     } catch (err) {
       console.error(err);
       toast?.error?.("Failed to download invoice");
     } finally {
       setLoading(false);
+      setShowTypeModal(false);
+      setSelectedOrder(null);
     }
   };
 
@@ -86,7 +95,7 @@ const AdminOrder = () => {
       await customFetch.delete(`${url}/${selectedOrder.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      window.location.reload(); // or invalidate queries
+      window.location.reload(); // refresh or invalidate query
     } catch (err) {
       console.error(err);
     } finally {
@@ -135,9 +144,12 @@ const AdminOrder = () => {
                 </span>
               </td>
               <td className="flex gap-2">
-                {/* ✅ Download Button */}
+                {/* ✅ Download Invoice Button */}
                 <button
-                  onClick={() => handleDownloadInvoice(order)}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setShowTypeModal(true); // open type modal
+                  }}
                   disabled={loading}
                   className="btn btn-sm btn-outline"
                   title="Download Invoice"
@@ -145,7 +157,7 @@ const AdminOrder = () => {
                   <FaCloudDownloadAlt className="text-blue-600" />
                 </button>
 
-                {/* ✅ Edit Button */}
+                {/* ✅ Edit */}
                 <Link
                   to={`edit/${order.id}`}
                   className="btn btn-sm btn-outline"
@@ -153,7 +165,7 @@ const AdminOrder = () => {
                   Edit
                 </Link>
 
-                {/* ✅ Delete Button */}
+                {/* ✅ Delete */}
                 <button
                   onClick={() => {
                     setSelectedOrder(order);
@@ -169,7 +181,7 @@ const AdminOrder = () => {
           ))}
           {orders.length === 0 && (
             <tr>
-              <td colSpan="8" className="text-center text-gray-500 py-4">
+              <td colSpan="9" className="text-center text-gray-500 py-4">
                 No orders found.
               </td>
             </tr>
@@ -203,6 +215,44 @@ const AdminOrder = () => {
                 className="btn"
                 onClick={() => {
                   setShowModal(false);
+                  setSelectedOrder(null);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* ✅ Bill Type Selection Modal */}
+      {showTypeModal && (
+        <dialog open className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-4 text-center">
+              Select Bill Type
+            </h3>
+            <div className="flex justify-center gap-4 mb-6">
+              <button
+                className="btn btn-success"
+                disabled={loading}
+                onClick={() => handleDownloadInvoice(selectedOrder, "Cash")}
+              >
+                {loading ? "Generating..." : "Cash Bill"}
+              </button>
+              <button
+                className="btn btn-warning"
+                disabled={loading}
+                onClick={() => handleDownloadInvoice(selectedOrder, "Credit")}
+              >
+                {loading ? "Generating..." : "Credit Bill"}
+              </button>
+            </div>
+            <div className="modal-action justify-center">
+              <button
+                className="btn"
+                onClick={() => {
+                  setShowTypeModal(false);
                   setSelectedOrder(null);
                 }}
               >
